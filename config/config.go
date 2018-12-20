@@ -15,7 +15,6 @@ type settingsKeys struct {
 	DbPort          string `name:"DB_PORT"`
 	DbSchema        string `name:"DB_SCHEMA"`
 	GoogleProjectID string `name:"GOOGLE_PROJECT_ID"`
-	// LoggerName      string `name:"LOGGER_NAME" default:"MMLogger"`
 }
 
 var Keys = settingsKeys{}

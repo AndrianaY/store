@@ -47,23 +47,14 @@ func encodeErrors(ctx context.Context, err error, w http.ResponseWriter) {
 
 	if customErrors.IsNotFoundError(err) {
 		w.WriteHeader(http.StatusNotFound)
-
-		enc.Encode(errorResponse{
-			Message: err.Error(),
-		})
 	} else if customErrors.IsBadRequest(err) {
 		w.WriteHeader(http.StatusBadRequest)
-
-		enc.Encode(errorResponse{
-			Message: err.Error(),
-		})
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)
-
-		enc.Encode(errorResponse{
-			Message: err.Error(),
-		})
 	}
+	enc.Encode(errorResponse{
+		Message: err.Error(),
+	})
 }
 
 func makeRequestContext(_ context.Context, r *http.Request) context.Context {
@@ -79,7 +70,6 @@ func encodeEmptyResponse(_ context.Context, w http.ResponseWriter, response inte
 
 func decodeGoodsRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	return r, nil
-
 }
 
 func encodeGoodsResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
@@ -97,8 +87,8 @@ func decodeDeleteGoodRequest(_ context.Context, r *http.Request) (interface{}, e
 	if err != nil {
 		return nil, customErrors.ErrGoodNotFound
 	}
-
 	request.ID = ID
+
 	return request, nil
 }
 
@@ -159,7 +149,7 @@ func decodeUploadFileRequest(_ context.Context, r *http.Request) (interface{}, e
 
 	files, err := getFiles(r, "files")
 	if err != nil {
-		errors.New("files")
+		errors.New("files is nil")
 	} else if len(files) == 0 {
 		errors.New("Should upload at least one file")
 	}

@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/go-kit/kit/log"
-
 	"github.com/AndrianaY/store/config"
 
 	_ "database/sql"
@@ -31,10 +29,8 @@ type common struct {
 }
 
 type DB struct {
-	Goods   GoodsRepository
-	MysqlDB *gorm.DB
-	Common  Common
-	log     log.Logger
+	Goods  GoodsRepository
+	Common Common
 }
 
 func getConnectionString() string {
@@ -48,7 +44,7 @@ func getConnectionString() string {
 	)
 }
 
-func NewDatabase(log log.Logger) (DB, error) {
+func NewDatabase() (DB, error) {
 	db, err := gorm.Open("mysql", getConnectionString())
 	if err != nil {
 		return DB{}, err
@@ -58,11 +54,9 @@ func NewDatabase(log log.Logger) (DB, error) {
 		Goods: &GoodsTable{
 			MysqlDB: db,
 		},
-		MysqlDB: db,
 		Common: &common{
 			MysqlDB: db,
 		},
-		log: log,
 	}, nil
 }
 

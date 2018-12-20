@@ -1,0 +1,140 @@
+swagger: "2.0"
+info:
+  description: Online store
+  version: "0.1"
+  title: Online store
+basePath: /
+tags:
+  - name: goods
+    description: goods
+  - name: docs
+    description: Documentation
+schemes:
+  - http
+
+paths:
+  /goods:
+    get:
+      tags:
+        - goods
+      summary: goods search
+      description: Returns list of goods
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: list of the goods
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/good"
+        500:
+          $ref: "#/definitions/InternalServerErrorResponse"
+          
+    post:
+      tags:
+        - goods
+      summary: Creates new good
+      description: Creates new good.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/good"
+      responses:
+        500:
+          $ref: "#/definitions/InternalServerErrorResponse"
+        201:
+          description: Successful creation of good
+          schema:
+            $ref: "#/definitions/good"
+        400:
+          description: Bad request
+          schema:
+            $ref: "#/definitions/BadRequestResponse"
+
+  /docs:
+    get:
+      tags:
+        - docs
+      summary: Openapi docs
+      operationId: getDocs
+      produces:
+        - application/html
+      security: []
+      responses:
+        200:
+          description: This openapi UI
+  
+  /docs/{filename}: # this is a little bit tricky but this is how to enable access to swagger's files without setting "x-google-allow" options
+    get:
+      tags:
+        - docs
+      summary: Openapi docs files
+      operationId: getDocsFiles
+      produces:
+        - application/html
+      security: []
+      parameters:
+        - in: path
+          name: filename
+          description: The filename of swagger doc
+          type: string
+          required: true
+      responses:
+        200:
+          description: File content
+  
+  /api-docs:
+    get:
+      tags:
+        - docs
+      summary: Returns YAML file content with API documentation for Swagger UI
+      operationId: getApiDocs
+      produces:
+        - text/x-yaml
+      security: []
+      responses:
+        200:
+          description: YAML content with API documentation
+          
+definitions:
+  good:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int
+      Name:
+        type: string
+      Price:
+        type: integer
+        format: int
+
+
+  BadRequestResponse:
+    type: object
+    properties:
+      message:
+        type: string
+      errors:
+        type: object
+        properties:
+          fieldName:
+            type: array
+            items: 
+              type: string
+              description: Error description
+  
+  InternalServerErrorResponse:
+    type: object
+    properties:
+      message:
+        type: string

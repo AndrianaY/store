@@ -56,7 +56,7 @@ func (s *service) CreateGood(ctx context.Context, name string, price int) (*mode
 			return nil, customErrors.ErrGoodNotFound
 		}
 	}
-	// uuid, _ := uuid.NewV4()
+
 	var good models.Good
 	good = models.Good{
 		Name:  name,
@@ -112,6 +112,7 @@ func (s *service) Goods(ctx context.Context, outGoods *[]models.Good) (goods *[]
 }
 
 func (s *service) EditGood(ctx context.Context, ID int, name *string, price *int) (*models.Good, error) {
+	//todo: add verification if name already exists
 	var good models.Good
 
 	if err := s.DB.Common.FindByID(ID, &good); err != nil {

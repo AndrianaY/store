@@ -21,13 +21,14 @@ func main() {
 		logger = log.With(logger, "caller", log.DefaultCaller)
 	}
 
-	db, err := mysqldb.NewDatabase(logger)
+	db, err := mysqldb.NewDatabase()
 	if err != nil {
 		panic(err)
 	}
-	bucket := bucket.MakeStorage(config.Keys.BucketID, logger, db.Goods)
+	bucket := bucket.MakeStorage(config.Keys.BucketID)
 
 	service := MakeService(bucket, db, logger)
+
 	http.Handle("/", MakeHandler(service))
 
 	port := config.Keys.AppPort

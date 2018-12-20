@@ -23,16 +23,20 @@ func New(routes []Route) *mux.Router {
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(route.Handler)
-
-		router.
-			StrictSlash(route.StrictSlash).
-			Methods(http.MethodOptions).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-				w.WriteHeader(http.StatusOK)
-			}))
 	}
-
+	makeSwaggerHandler(router)
 	return router
+}
+
+func makeSwaggerHandler(r *mux.Router) {
+	const docsPath = "/docs"
+
+	r.StrictSlash(false).Path(docsPath).Handler(http.RedirectHandler(docsPath+"/", http.StatusMovedPermanently))
+	r.StrictSlash(true).PathPrefix(docsPath + "/").Handler(
+		http.StripPrefix(docsPath+"/", http.FileServer(http.Dir("./swagger/"))),
+	)
+
+	r.Path("/api-docs").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./openapi.yml")
+	})
 }
