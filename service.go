@@ -48,13 +48,11 @@ func (s *service) CreateGood(ctx context.Context, name string, price int) (*mode
 
 	var duplicatedGood models.Good
 
-	if name != "" {
-		if err := s.DB.Goods.FindFirstByName(name, &duplicatedGood); err == nil {
-			return nil, customErrors.ErrGoodWithNameExists
-		} else if err != gorm.ErrRecordNotFound {
-			s.log.Log("Unable to find a good by name, goodName = %v, err = %v", name, err)
-			return nil, customErrors.ErrGoodNotFound
-		}
+	if err := s.DB.Goods.FindFirstByName(name, &duplicatedGood); err == nil {
+		return nil, customErrors.ErrGoodWithNameExists
+	} else if err != gorm.ErrRecordNotFound {
+		s.log.Log("Unable to find a good by name, goodName = %v, err = %v", name, err)
+		return nil, customErrors.ErrGoodNotFound
 	}
 
 	var good models.Good
@@ -90,11 +88,8 @@ func (s *service) UploadFiles(ctx context.Context, id int, files []models.File) 
 }
 
 func (s *service) Goods(ctx context.Context, outGoods *[]models.Good) (goods *[]models.Good, err error) {
-
 	var savedGoods []models.Good
-	_, err = s.DB.Goods.GetGoods(&savedGoods)
-
-	if err != nil {
+	if _, err := s.DB.Goods.GetGoods(&savedGoods); err != nil {
 		s.log.Log("Service.GetGoods: Unable to find goods in the DB, error = %v", err)
 		return &savedGoods, errors.New("Unable to get goods")
 	}
